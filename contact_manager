@@ -1,4 +1,11 @@
 import csv
+import requests
+import validators
+
+##Variables globales
+def nombre_apellido(s):
+  return len(s.split()) > 1
+
 try:
     reader = csv.reader(open('contacts.csv', 'r'))
     contacts = {}
@@ -11,9 +18,26 @@ except IOError:
 exit = False
 
 def crearContacto():
-    input_nombre = input("Ingrese nombre del nuevo contacto\n")
-    input_telefono = input("Ingrese telefono del nuevo contacto\n")
-    contacts[input_nombre] = input_telefono
+    nombre = (input("Ingrese nombre del nuevo contacto\n"))
+    if (nombre_apellido(nombre) == True):
+        numero = (input("Ingrese el telefono:\n"))
+        if (numero.isdigit()==True):
+            mail = (input("Ingrese la email address:\n"))
+            if validators.email(mail):
+                empresa = input("Ingrese la empresa (opcional):\n")
+                extra = input("Ingrese informacion  extra (opcional):")
+                contacts[nombre]={}
+                contacts[nombre]={}
+                contacts[nombre]['telefono']=numero
+                contacts[nombre]['email']=mail
+                contacts[nombre]['empresa']=empresa
+                contacts[nombre]['extra']=extra
+            else:
+                print("Su correo debe tener solamente una '@' y un dominio")
+        else:
+            print("El telefono debe contener solamente numeros")
+    else:
+        print("El nombre debe contener al menos un nombre y un apellido")
 
 def editarContacto():
     input_nombre = input("Ingrese nombre del contacto que quiere editar\n")
@@ -51,26 +75,37 @@ def verContactos():
     for key,value in contacts.items():
         print(key + " " + value)
 
-def guardarcontact():
+def guardar():
     with open('contacts.csv', 'w') as f:
         for key in contacts.keys():
             f.write("%s, %s\n" % (key, contacts[key]))
 
+def llamar():
+    pass
+def mensaje():
+    pass
+def email():
+    pass
+
 
 while not exit:
 
-    input_menu = int(input(" 1. Crear Contacto \n 2. Editar Contacto\n 3. Buscar Contacto\n 4. Eliminar Contacto\n 5.Ver Contactos\n 6. Guardar contactos creados\n 7. Salir\n"))
+    input_menu = int(input(" 1. Agregar Contacto \n 2. Buscar Contacto\n 3. Listar Contacto\n 4. Eliminar Contacto\n 5. Llamar Contactos\n 6. Enviar SMS a contacto\n 7. Enviar mail a Contacto\n 8. Guardar/Exportar contactos creados\n 9. Salir\n"))
     if input_menu == 1:
         crearContacto()
     if input_menu == 2:
-        editarContacto()
-    if input_menu == 3:
         buscarContacto()
+    if input_menu == 3:
+        verContactos()
     if input_menu == 4:
         eliminarContacto()
     if input_menu == 5:
-        verContactos()
+        llamar()
     if input_menu == 6:
-        guardarcontact()
-    elif input_menu == 7:
+        mensaje()
+    if input_menu == 7:
+        email()
+    if input_menu == 8:
+        guardar()
+    elif input_menu == 9:
         exit = True
