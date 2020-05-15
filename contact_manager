@@ -1,10 +1,11 @@
-##Cosas incompleta: listar contactos para borrar, llamar, mandar mensaje, mandar email
+##Cosas incompletas: listar contactos para borrar numerado
 
 import csv
 import requests
 import validators
 import time
 import emoji
+from os import system, name 
 
 
 ##Variables globales
@@ -17,6 +18,13 @@ def orden_alfabetico(unsorted_dict):
     for key in sorted_keys:
         sorted_dict.update({key: unsorted_dict[key]})
     return sorted_dict
+###Clearscreen
+def clear(): 
+    if name == 'nt': 
+        _ = system('cls') 
+
+    else: 
+        _ = system('clear') 
 try:
     reader = csv.reader(open('contacts.csv', 'r'))
     contacts = {}
@@ -31,7 +39,7 @@ exit = False
 
 def crearContacto():
     nombre_init = (input("Ingrese nombre del nuevo contacto\n"))
-    nombre=nombre_init.upper()
+    nombre=nombre_init.title()
     if (nombre_apellido(nombre) == True):
         numero = (input("Ingrese el telefono:\n"))
         if (numero.isdigit()==True):
@@ -41,13 +49,13 @@ def crearContacto():
                 extra = input("Ingrese informacion  extra (opcional):")
                 letra = nombre[:1]
                 if letra in contacts:
-                    contacts[letra][nombre] = {'telefono': numero, 'email': mail, 'empresa': empresa, 'extra': extra}
+                    contacts[letra][nombre] = {'telefono': numero, 'email': mail, 'company': empresa, 'extra': extra}
                 else:
                     contacts[letra]={}
-                    contacts[letra]={nombre:{'telefono': numero, 'email': mail, 'empresa': empresa, 'extra': extra}}
+                    contacts[letra]={nombre:{'telefono': numero, 'email': mail, 'company': empresa, 'extra': extra}}
                                 
                 orden_alfabetico(contacts)
-                print(contacts)
+                print(emoji.emojize((f"¡Contacto '{nombre}'' guardado con éxito! :white_check_mark:\n"), use_aliases=True))
             else:
                 print("Su correo debe tener solamente una '@' y un dominio valido")
         else:
@@ -57,7 +65,8 @@ def crearContacto():
 
 
 def buscarContacto():
-    input_nombre = input("Ingrese su búsqueda de contacto:\n")
+    nombre = input("Ingrese su búsqueda de contacto:\n")
+    input_nombre=nombre.title()
     existe = input_nombre in contacts
 
     if existe:
@@ -67,7 +76,8 @@ def buscarContacto():
 
 
 def eliminarContacto():
-    input_nombre = input("Ingrese nombre del contacto que quiere eliminar\n")
+    nombre = input("Ingrese nombre del contacto que quiere eliminar\n")
+    input_nombre=nombre.title()
     letra = input_nombre[:1]
     if letra in contacts:
         if input_nombre in contacts[letra]:
@@ -75,36 +85,74 @@ def eliminarContacto():
             print(f"Contacto {input_nombre} está siendo eliminado...")
             time.sleep(3)
             print('¡Contacto eliminado con éxito!\n')
+        else:
+            print("El contacto no existe, intentelo de nuevo\n")
+            time.sleep(1)
     else:
         print("El contacto no existe, intentelo de nuevo\n")
         time.sleep(1)
 
+def listarContactos():
+    letras=contacts.keys()
+    print("\nListado de contactos:")
+
+    for i in letras:
+        x=1
+        print(f"    \n{i}:\n")
+        nombre=contacts[i].keys()
+        print ('    \n'.join(nombre))
+        x+=1
+    print("------------------------- \n")
+
 def verContactos():
-    for key,value in contacts.items():
-        print(key + " " + value)
+    contacto_init=input("Ingrese el contacto que desea ver:\n")
+    contacto=contacto_init.title()
+    letra = contacto[:1]
+    if  letra in contacts:
+        if contacto in contacts[letra]:
+            print(f'=========================================\n')
+            print(f"\nVer '{contacto}':\n")
+            print(emoji.emojize((f" Telefono: {contacts[letra][contacto]['telefono']} :phone: \n"), use_aliases=True))
+            print(emoji.emojize((f" Email: {contacts[letra][contacto]['email']} :email:\n"), use_aliases=True))
+            print(emoji.emojize((f" Company: {contacts[letra][contacto]['company']} :house:\n"), use_aliases=True))
+            print(emoji.emojize((f" Extra: {contacts[letra][contacto]['extra']} :round_pushpin: \n"), use_aliases=True))
+        else:
+            print("El contacto no existe, intentelo de nuevo\n")
+            time.sleep(1)
+    else:
+        print("     El contacto no existe, intentelo de nuevo\n")
+        time.sleep(1)
+    print("========================================")
+
+
 
 def guardar():
     with open('contacts.csv', 'w') as f:
         for key in contacts.keys():
             f.write("%s, %s\n" % (key, contacts[key]))
-    print(emoji.emojize((f"Sus contactos están siendo guardados :open_file_folder: ..."), use_aliases=True))
+    print(emoji.emojize((f"     Sus contactos están siendo guardados :open_file_folder: ..."), use_aliases=True))
     time.sleep(3)
-    print('¡Contactos guardados en su computadora!, encuentrelos como "contacts.csv"  \n')
+    print('     ¡Contactos guardados en su computadora!, encuentrelos como "contacts.csv"  \n')
 
 def llamar():
-    contacto=input("Ingrese el nombre del contacto al que desea llamar\n")
+    contacto_init=input("Ingrese el nombre del contacto al que desea llamar\n")
+    contacto=contacto_init.title()
     letra = contacto[:1]
-    if  letra in contacts:
+    if letra in contacts:
         if contacto in contacts[letra]:
             print(emoji.emojize((f"Llamando a {contacto} al {contacts[letra][contacto]['telefono']} :phone: ...\n"), use_aliases=True))
             time.sleep(3)
-            print('¡Llamada finalizada!\n')
+            print('         ¡Llamada finalizada!\n')
+        else:
+            print("El contacto no existe, intentelo de nuevo\n")
+            time.sleep(1)
     else:
-        print("El contacto no existe, intentelo de nuevo\n")
+        print("         El contacto no existe, intentelo de nuevo\n")
         time.sleep(1)
 
 def mensaje():
-    contacto=input("Ingrese el nombre del contacto al que desea enviar un mensaje:\n")
+    contacto_init=input("Ingrese el nombre del contacto al que desea enviar un mensaje:\n")
+    contacto=contacto_init.title()
     mensaje=input(f"Escriba el mensaje que desea enviar a {contacto}:\n")
     letra = contacto[:1]
     if  letra in contacts:
@@ -112,13 +160,17 @@ def mensaje():
             print(emoji.emojize((f"Para: {contacto} al {contacts[letra][contacto]['telefono']} :calling: ...\n"), use_aliases=True))
             print(f">> {mensaje}\n")
             time.sleep(3)
-            print('¡Mensaje enviado exitosamente!\n')
+            print('         ¡Mensaje enviado exitosamente!\n')
+        else:
+            print("El contacto no existe, intentelo de nuevo\n")
+            time.sleep(1)
     else:
-        print("El contacto no existe, intentelo de nuevo\n")
+        print("         El contacto no existe, intentelo de nuevo\n")
         time.sleep(1)
 
 def email():
-    contacto=input("Ingrese el nombre del contacto para enviar el email:\n")
+    contacto_init=input("Ingrese el nombre del contacto para enviar el email:\n")
+    contacto=contacto_init.title()
     subject=input("Escriba el asunto de su correo electronico:\n")
     mensaje=input(f"Escriba el body que desea enviar a {contacto} por mail:\n")
     letra = contacto[:1]
@@ -127,7 +179,10 @@ def email():
             print(emoji.emojize((f"Para: {contacto} al {contacts[letra][contacto]['email']} :email: ...\n"), use_aliases=True))
             print(f">> Asunto:{subject}\n --{mensaje}\n") 
             time.sleep(3)
-            print('¡Email enviado exitosamente!\n')
+            print('         ¡Email enviado exitosamente!\n')
+        else:
+            print("El contacto no existe, intentelo de nuevo\n")
+            time.sleep(1)
     else:
         print("El contacto no existe, intentelo de nuevo\n")
         time.sleep(1)
@@ -137,20 +192,32 @@ while not exit:
 
     input_menu = int(input(" 1. Agregar Contacto \n 2. Buscar Contacto\n 3. Listar Contacto\n 4. Eliminar Contacto\n 5. Llamar Contactos\n 6. Enviar SMS a contacto\n 7. Enviar mail a Contacto\n 8. Guardar/Exportar contactos creados\n 9. Salir\n"))
     if input_menu == 1:
+        clear()
         crearContacto()
     if input_menu == 2:
+        clear()
         buscarContacto()
     if input_menu == 3:
+        clear()
+        listarContactos()
         verContactos()
     if input_menu == 4:
+        clear()
         eliminarContacto()
     if input_menu == 5:
+        clear()
         llamar()
     if input_menu == 6:
+        clear()
         mensaje()
     if input_menu == 7:
+        clear()
         email()
     if input_menu == 8:
+        clear()
         guardar()
     elif input_menu == 9:
+        clear()
+        print(f">> Saliendo...\n") 
+        time.sleep(0.5)
         exit = True
