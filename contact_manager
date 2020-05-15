@@ -53,9 +53,9 @@ def crearContacto():
                 else:
                     contacts[letra]={}
                     contacts[letra]={nombre:{'telefono': numero, 'email': mail, 'company': empresa, 'extra': extra}}
-                                
-                orden_alfabetico(contacts)
+
                 print(emoji.emojize((f"¡Contacto '{nombre}'' guardado con éxito! :white_check_mark:\n"), use_aliases=True))
+                print((contacts))
             else:
                 print("Su correo debe tener solamente una '@' y un dominio valido")
         else:
@@ -97,11 +97,10 @@ def listarContactos():
     print("\nListado de contactos:")
 
     for i in letras:
-        x=1
         print(f"    \n{i}:\n")
+        largo=len(contacts[i].keys())
         nombre=contacts[i].keys()
-        print ('    \n'.join(nombre))
-        x+=1
+        print ('\n'.join(nombre))
     print("------------------------- \n")
 
 def verContactos():
@@ -203,14 +202,18 @@ while not exit:
         verContactos()
     if input_menu == 4:
         clear()
+        listarContactos()
         eliminarContacto()
     if input_menu == 5:
+        listarContactos()
         clear()
         llamar()
     if input_menu == 6:
+        listarContactos()
         clear()
         mensaje()
     if input_menu == 7:
+        listarContactos()
         clear()
         email()
     if input_menu == 8:
