@@ -1,4 +1,4 @@
-##Cosas incompletas: listar contactos para borrar numerado
+##Cosas incompletas: importar csv
 
 import csv
 import requests
@@ -6,7 +6,6 @@ import validators
 import time, string
 import emoji
 from os import system, name 
-import pandas as pd
 
 
 
@@ -28,11 +27,12 @@ def clear():
     else: 
         _ = system('clear') 
 try:
-    reader = csv.reader(open('contacts.csv', 'r'))
+    '''reader = csv.reader(open('contacts.csv', 'r'))
     contacts = {}
     for row in reader:
         k, v = row
-        contacts[k] = v
+        contacts[k] = v'''
+        pass
 except IOError:
     r = requests.get('http://demo7130536.mockable.io/final-contacts-100')
     contacts=(r.json())
@@ -137,15 +137,22 @@ def verContactos():
 
 
 def guardar():
-    '''with open('contacts.csv', 'w') as f:
-        for key in contacts.keys():
-            f.write("%s, %s\n" % (key, contacts[key]))'''
-    df = pd.DataFrame(contacts)
+    data =  contacts
+    outputFile = csv.writer(open("contact_manager.csv", "w", newline=''))
 
-    df.to_csv('contact_manager.csv', index=False)
+    outputFile.writerow(["nombre", "telefono", "email", "company", "extra"])
+
+    for item in data:
+        for detail in data[item]:
+            outputFile.writerow([detail,
+                        data[item][detail]["telefono"],
+                        data[item][detail]["email"],
+                        data[item][detail]["company"],
+                        data[item][detail]["extra"]])
+
     print(emoji.emojize((f"     Sus contactos están siendo guardados :open_file_folder: ..."), use_aliases=True))
     time.sleep(3)
-    print('     ¡Contactos guardados en su computadora!, encuentrelos como "contacts.csv"  \n')
+    print('     ¡Contactos guardados en su computadora!, encuentrelos como "contact_manager.csv"  \n')
 
 def llamar():
     contacto_init=input("Ingrese el nombre del contacto al que desea llamar\n")
