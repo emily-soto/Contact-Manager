@@ -95,12 +95,12 @@ def eliminarContacto():
 def listarContactos():
     letras=contacts.keys()
     print("\nListado de contactos:")
-
+    contador = 1
     for i in letras:
-        print(f"    \n{i}:\n")
-        largo=len(contacts[i].keys())
-        nombre=contacts[i].keys()
-        print ('\n'.join(nombre))
+        print('\n',i + ': ','\n')
+        for contacto in contacts[i]:
+            print(str(contador)+ '.', contacto)
+            contador += 1
     print("------------------------- \n")
 
 def verContactos():
