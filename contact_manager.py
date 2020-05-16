@@ -1,4 +1,3 @@
-##Cosas incompletas: listar contactos para borrar numerado
 
 import csv
 import requests
@@ -27,20 +26,8 @@ def clear():
     else: 
         _ = system('clear') 
 
-try:
-    with open('contact_manager.csv', newline='') as inputFile:
-        contacts = {}
-        reader = csv.reader(inputFile)
-        headers = next(reader) 
-        for row in reader:
-            if row != '\n':
-                indice = row[0][:1]
-            if not hasattr(contacts, indice):
-                contacts[indice] = {}
-                contacts[indice][row[0]] = {'telefono': row[1], 'email': row[2], 'company': row[3], 'extra': row[4]}
-except IOError:
-    r = requests.get('http://demo7130536.mockable.io/final-contacts-100')
-    contacts=(r.json())
+r = requests.get('http://demo7130536.mockable.io/final-contacts-100')
+contacts=(r.json())
 
 exit = False
 
@@ -219,8 +206,8 @@ def email():
 
 
 while not exit:
-    print("\n\n \033[0;35;47m ==========Menu principal===========")
-    input_menu = int(input("   1. Agregar Contacto \n 2.  Buscar Contacto\n 3. Listar Contacto\n 4. Eliminar Contacto\n 5. Llamar Contactos\n 6. Enviar SMS a contacto\n 7. Enviar mail a Contacto\n 8. Guardar/Exportar contactos creados\n 9. Salir\n"))
+    print("\n\n==========Menu principal===========")
+    input_menu = int(input(" 1. Agregar Contacto \n 2. Buscar Contacto\n 3. Listar Contacto\n 4. Eliminar Contacto\n 5. Llamar Contactos\n 6. Enviar SMS a contacto\n 7. Enviar mail a Contacto\n 8. Guardar/Exportar contactos creados\n 9. Salir\n"))
     if input_menu == 1:
         clear()
         crearContacto()
@@ -255,4 +242,3 @@ while not exit:
         print(f">> Saliendo...\n") 
         time.sleep(0.5)
         exit = True
-
