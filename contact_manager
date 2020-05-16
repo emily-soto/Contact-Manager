@@ -3,9 +3,11 @@
 import csv
 import requests
 import validators
-import time
+import time, string
 import emoji
 from os import system, name 
+import pandas as pd
+
 
 
 ##Variables globales
@@ -32,7 +34,7 @@ try:
         k, v = row
         contacts[k] = v
 except IOError:
-    r = requests.get('http://demo7130536.mockable.io/contacts')
+    r = requests.get('http://demo7130536.mockable.io/final-contacts-100')
     contacts=(r.json())
 
 exit = False
@@ -54,25 +56,31 @@ def crearContacto():
                     contacts[letra]={}
                     contacts[letra]={nombre:{'telefono': numero, 'email': mail, 'company': empresa, 'extra': extra}}
 
-                print(emoji.emojize((f"¡Contacto '{nombre}'' guardado con éxito! :white_check_mark:\n"), use_aliases=True))
-                print((contacts))
+                print(emoji.emojize((f"¡Contacto '{nombre}' guardado con éxito! :white_check_mark:\n"), use_aliases=True))
             else:
-                print("Su correo debe tener solamente una '@' y un dominio valido")
+                print("WARNING!!! Su correo debe tener solamente una '@' y un dominio valido\n")
         else:
-            print("El telefono debe contener solamente numeros")
+            print(" WARNING!!! El telefono debe contener solamente numeros\n")
     else:
-        print("El nombre debe contener al menos un nombre y un apellido")
-
+        print(" WARNING!!! El nombre debe contener al menos un nombre y un apellido\n")
+    terminar=input("---------Presione una tecla para continuar---------\n")
 
 def buscarContacto():
     nombre = input("Ingrese su búsqueda de contacto:\n")
-    input_nombre=nombre.title()
-    existe = input_nombre in contacts
+    input_nombre=nombre.casefold()
+    letras=list(contacts.keys())
+    print("\nResultados:")
 
-    if existe:
-        print(input_nombre + " " + contacts[input_nombre])
-    else:
-        print("El contacto no existe, intentelo de nuevo\n")
+    for i in letras:
+        for x in range(len(contacts[i])):
+            name= list(contacts[i].keys())[x]
+            comparar=str(name.casefold())
+            if comparar.find(input_nombre) != -1:
+                    print(f"    - {name}")
+    print("\n")
+    terminar=input("-------Si ya termino su búsqueda, presione una tecla-------\n")
+
+
 
 
 def eliminarContacto():
@@ -92,29 +100,31 @@ def eliminarContacto():
         print("El contacto no existe, intentelo de nuevo\n")
         time.sleep(1)
 
+
 def listarContactos():
-    letras=contacts.keys()
+    ordenados = orden_alfabetico(contacts)
+    letras = ordenados.keys()
     print("\nListado de contactos:")
     contador = 1
     for i in letras:
         print('\n',i + ': ','\n')
-        for contacto in contacts[i]:
+        for contacto in ordenados[i]:
             print(str(contador)+ '.', contacto)
             contador += 1
     print("------------------------- \n")
 
 def verContactos():
-    contacto_init=input("Ingrese el contacto que desea ver:\n")
+    contacto_init=input("Ingrese el nombre del contacto que desea ver:\n")
     contacto=contacto_init.title()
     letra = contacto[:1]
     if  letra in contacts:
         if contacto in contacts[letra]:
             print(f'=========================================\n')
             print(f"\nVer '{contacto}':\n")
-            print(emoji.emojize((f" Telefono: {contacts[letra][contacto]['telefono']} :phone: \n"), use_aliases=True))
-            print(emoji.emojize((f" Email: {contacts[letra][contacto]['email']} :email:\n"), use_aliases=True))
-            print(emoji.emojize((f" Company: {contacts[letra][contacto]['company']} :house:\n"), use_aliases=True))
-            print(emoji.emojize((f" Extra: {contacts[letra][contacto]['extra']} :round_pushpin: \n"), use_aliases=True))
+            print(emoji.emojize((f" :phone: Telefono: {contacts[letra][contacto]['telefono']}  \n"), use_aliases=True))
+            print(emoji.emojize((f" :email: Email: {contacts[letra][contacto]['email']} \n"), use_aliases=True))
+            print(emoji.emojize((f" :house: Company: {contacts[letra][contacto]['company']} \n"), use_aliases=True))
+            print(emoji.emojize((f" :round_pushpin: Extra: {contacts[letra][contacto]['extra']}  \n"), use_aliases=True))
         else:
             print("El contacto no existe, intentelo de nuevo\n")
             time.sleep(1)
@@ -122,13 +132,17 @@ def verContactos():
         print("     El contacto no existe, intentelo de nuevo\n")
         time.sleep(1)
     print("========================================")
+    terminar=input("---------Presione una tecla para continuar---------\n")
 
 
 
 def guardar():
-    with open('contacts.csv', 'w') as f:
+    '''with open('contacts.csv', 'w') as f:
         for key in contacts.keys():
-            f.write("%s, %s\n" % (key, contacts[key]))
+            f.write("%s, %s\n" % (key, contacts[key]))'''
+    df = pd.DataFrame(contacts)
+
+    df.to_csv('contact_manager.csv', index=False)
     print(emoji.emojize((f"     Sus contactos están siendo guardados :open_file_folder: ..."), use_aliases=True))
     time.sleep(3)
     print('     ¡Contactos guardados en su computadora!, encuentrelos como "contacts.csv"  \n')
@@ -142,6 +156,7 @@ def llamar():
             print(emoji.emojize((f"Llamando a {contacto} al {contacts[letra][contacto]['telefono']} :phone: ...\n"), use_aliases=True))
             time.sleep(3)
             print('         ¡Llamada finalizada!\n')
+            time.sleep(1)
         else:
             print("El contacto no existe, intentelo de nuevo\n")
             time.sleep(1)
@@ -160,6 +175,7 @@ def mensaje():
             print(f">> {mensaje}\n")
             time.sleep(3)
             print('         ¡Mensaje enviado exitosamente!\n')
+            time.sleep(1)
         else:
             print("El contacto no existe, intentelo de nuevo\n")
             time.sleep(1)
@@ -179,6 +195,7 @@ def email():
             print(f">> Asunto:{subject}\n --{mensaje}\n") 
             time.sleep(3)
             print('         ¡Email enviado exitosamente!\n')
+            time.sleep(1)
         else:
             print("El contacto no existe, intentelo de nuevo\n")
             time.sleep(1)
@@ -188,7 +205,7 @@ def email():
 
 
 while not exit:
-
+    print("\n\n==========Menu principal===========")
     input_menu = int(input(" 1. Agregar Contacto \n 2. Buscar Contacto\n 3. Listar Contacto\n 4. Eliminar Contacto\n 5. Llamar Contactos\n 6. Enviar SMS a contacto\n 7. Enviar mail a Contacto\n 8. Guardar/Exportar contactos creados\n 9. Salir\n"))
     if input_menu == 1:
         clear()
