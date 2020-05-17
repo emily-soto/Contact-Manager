@@ -1,4 +1,4 @@
-
+### Emily Soto y Madeline Salguero
 import csv
 import requests
 import validators
@@ -26,6 +26,7 @@ def clear():
     else: 
         _ = system('clear') 
 
+clear()
 r = requests.get('http://demo7130536.mockable.io/final-contacts-100')
 contacts=(r.json())
 
@@ -223,16 +224,16 @@ while not exit:
         listarContactos()
         eliminarContacto()
     if input_menu == 5:
-        listarContactos()
         clear()
+        listarContactos()
         llamar()
     if input_menu == 6:
-        listarContactos()
         clear()
+        listarContactos()
         mensaje()
     if input_menu == 7:
-        listarContactos()
         clear()
+        listarContactos()
         email()
     if input_menu == 8:
         clear()
