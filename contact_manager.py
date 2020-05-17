@@ -130,7 +130,7 @@ def verContactos():
 
 
 def guardar():
-    data =  contacts
+    data =  orden_alfabetico(contacts) 
     ## W da permisos de escritura
     outputFile = csv.writer(open("contact_manager.csv", "w", newline=''))
     ##Crea encabezados
